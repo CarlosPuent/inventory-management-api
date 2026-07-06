@@ -24,7 +24,9 @@ public class ProductRepository : IProductRepository
 
     public Task<Product> AddAsync(Product product)
     {
-        _products.Add(product);
-        return Task.FromResult(product);
+        var nextId = _products.Count == 0 ? 1 : _products.Max(p => p.Id) + 1;
+        var created = product with { Id = nextId };
+        _products.Add(created);
+        return Task.FromResult(created);
     }
 }
