@@ -24,8 +24,10 @@ namespace InventoryApi.Repositories
 
         public Task<Supplier> AddAsync(Supplier supplier)
         {
-            _suppliers.Add(supplier);
-            return Task.FromResult(supplier);
+            var nextId = _suppliers.Count == 0 ? 1 : _suppliers.Max(s => s.Id) + 1;
+            var created = supplier with { Id = nextId };
+            _suppliers.Add(created);
+            return Task.FromResult(created);
         }
     }
 }
