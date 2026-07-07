@@ -19,5 +19,11 @@ public class InventoryDbContext : DbContext
         modelBuilder.Entity<Product>()
             .Property(p => p.Price)
             .HasPrecision(10, 2);
+
+        modelBuilder.Entity<Product>()
+            .HasOne(p => p.Category)
+            .WithMany()
+            .HasForeignKey(p => p.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict);
     }
 }
