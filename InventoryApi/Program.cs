@@ -14,6 +14,9 @@ builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddSingleton<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
+
+builder.Services.AddSingleton<IAppUserRepository, AppUsersRepository>();
+builder.Services.AddScoped<IAppUsersService, AppUsersService>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
