@@ -1,9 +1,7 @@
-﻿
-namespace InventoryApi.Models
+﻿namespace InventoryApi.Models
 {
-    public record AppUsers(int Id, string Name, string LastName, string ContactEmail, string phoneNumber, int Age, double Weight, bool IsActive)
+    public record AppUser(int Id, string Name, string LastName, string ContactEmail, string PhoneNumber, int Age, double Weight, bool IsActive)
     {
-
         public string GetStatusLabel()
         {
             return IsActive switch
@@ -18,6 +16,5 @@ namespace InventoryApi.Models
             await Task.Delay(1000);
             return $"Email validado: {ContactEmail}";
         }
-
     }
 }

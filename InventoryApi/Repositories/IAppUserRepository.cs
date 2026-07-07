@@ -4,8 +4,8 @@ namespace InventoryApi.Repositories
 {
     public interface IAppUserRepository
     {
-        Task<List<AppUsers>> GetAllAsync();
-        Task<AppUsers?> GetByIdAsync(int id);
-        Task<AppUsers> AddAsync(AppUsers appUsers);
+        Task<List<AppUser>> GetAllAsync();
+        Task<AppUser?> GetByIdAsync(int id);
+        Task<AppUser> AddAsync(AppUser appUser);
     }
 }
