@@ -1,5 +1,5 @@
-﻿using InventoryApi.Repositories;
-using InventoryApi.Models;
+﻿using InventoryApi.Models;
+using InventoryApi.Repositories;
 
 namespace InventoryApi.Services
 {
@@ -24,6 +24,23 @@ namespace InventoryApi.Services
 
         public Task<Supplier> CreateSupplierAsync(Supplier supplier)
         {
+            ValidateSupplierBusinessRules(supplier);
+            return _supplierRepository.AddAsync(supplier);
+        }
+
+        public async Task<Supplier?> UpdateSupplierAsync(int id, Supplier supplier)
+        {
+            ValidateSupplierBusinessRules(supplier);
+            return await _supplierRepository.UpdateAsync(id, supplier);
+        }
+
+        public async Task<bool> DeleteSupplierAsync(int id)
+        {
+            return await _supplierRepository.DeleteAsync(id);
+        }
+
+        private void ValidateSupplierBusinessRules(Supplier supplier)
+        {
             if (string.IsNullOrWhiteSpace(supplier.Name))
             {
                 throw new ArgumentException("El nombre del proveedor no puede estar vacío.");
@@ -33,8 +50,6 @@ namespace InventoryApi.Services
             {
                 throw new ArgumentException("Debe proporcionar un correo electrónico válido que contenga '@'.");
             }
-
-            return _supplierRepository.AddAsync(supplier);
         }
     }
 }

@@ -2,53 +2,84 @@
 using InventoryApi.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace InventoryApi.Controllers;
-
-[ApiController]
-[Route("api/[controller]")]
-public class SuppliersController : ControllerBase
+namespace InventoryApi.Controllers
 {
-
-    private readonly ISupplierService _supplierService;
-
-    public SuppliersController(ISupplierService supplierService)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class SuppliersController : ControllerBase
     {
-        _supplierService = supplierService;
-    }
+        private readonly ISupplierService _supplierService;
 
-    [HttpGet]
-    public async Task<ActionResult<List<Supplier>>> GetAllSuppliers()
-    {
-        var suppliers = await _supplierService.GetAllSuppliersAsync();
-        return Ok(suppliers);
-    }
-
-    [HttpGet("{id}")]
-    public async Task<ActionResult<Supplier>> GetSupplierById(int id)
-    {
-        var supplier = await _supplierService.GetSupplierByIdAsync(id);
-
-        if (supplier == null)
+        public SuppliersController(ISupplierService supplierService)
         {
-            return NotFound();
+            _supplierService = supplierService;
         }
 
-        return Ok(supplier);
-    }
-
-    [HttpPost]
-    public async Task<ActionResult<Supplier>> CreateSupplier([FromBody] Supplier supplier)
-    {
-        try
+        [HttpGet]
+        public async Task<ActionResult<List<Supplier>>> GetAllSuppliers()
         {
-            var createdSupplier = await _supplierService.CreateSupplierAsync(supplier);
-
-            return CreatedAtAction(nameof(GetSupplierById), new { id = createdSupplier.Id }, createdSupplier);
+            var suppliers = await _supplierService.GetAllSuppliersAsync();
+            return Ok(suppliers);
         }
-        catch (ArgumentException ex)
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Supplier>> GetSupplierById(int id)
         {
-            return BadRequest(ex.Message);
+            var supplier = await _supplierService.GetSupplierByIdAsync(id);
+
+            if (supplier == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(supplier);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Supplier>> CreateSupplier([FromBody] Supplier supplier)
+        {
+            try
+            {
+                var createdSupplier = await _supplierService.CreateSupplierAsync(supplier);
+                return CreatedAtAction(nameof(GetSupplierById), new { id = createdSupplier.Id }, createdSupplier);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<Supplier>> UpdateSupplier(int id, [FromBody] Supplier supplier)
+        {
+            try
+            {
+                var updatedSupplier = await _supplierService.UpdateSupplierAsync(id, supplier);
+
+                if (updatedSupplier == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(updatedSupplier);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteSupplier(int id)
+        {
+            var deleted = await _supplierService.DeleteSupplierAsync(id);
+
+            if (!deleted)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
         }
     }
 }
-
