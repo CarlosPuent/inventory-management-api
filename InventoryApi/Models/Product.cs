@@ -3,9 +3,9 @@ using System.Xml.Linq;
 
 namespace InventoryApi.Models
 {
-   
-    public record Product(int Id, String Name, decimal Price, int Stock)
+    public record Product(int Id, string Name, decimal Price, int Stock, int CategoryId)
     {
+        public Category? Category { get; init; }
 
         public string GetStockStatus()
         {
@@ -13,7 +13,7 @@ namespace InventoryApi.Models
             {
                 0 => "Agotado",
                 <= 10 => "Bajo",
-                _=> "Disponible"
+                _ => "Disponible"
             };
         }
 
