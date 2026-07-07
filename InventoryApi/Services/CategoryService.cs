@@ -32,7 +32,7 @@ namespace InventoryApi.Services
             if (string.IsNullOrWhiteSpace(category.Description) || category.Description.Length < 5 
                 || category.Description.Length > 100)
             {
-                throw new ArgumentException("La descripción de la categoría es obligatoria y debe tener entre 5 y 50 caracteres.");
+                throw new ArgumentException("La descripción de la categoría es obligatoria y debe tener entre 5 y 100 caracteres.");
             }
 
             return _categoryRepository.AddAsync(category);
