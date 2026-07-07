@@ -19,7 +19,7 @@ public class ProductsController : ControllerBase
     public async Task<ActionResult<List<Product>>> GetAllProducts()
     {
         var products = await _productService.GetAllProductsAsync();
-        return Ok(products); 
+        return Ok(products);
     }
 
     [HttpGet("{id}")]
@@ -29,27 +29,23 @@ public class ProductsController : ControllerBase
 
         if (product == null)
         {
-            return NotFound(); 
+            return NotFound();
         }
 
-        return Ok(product); 
+        return Ok(product);
     }
 
-  
     [HttpPost]
     public async Task<ActionResult<Product>> CreateProduct([FromBody] Product product)
     {
         try
         {
             var createdProduct = await _productService.CreateProductAsync(product);
-
-      
             return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, createdProduct);
         }
         catch (ArgumentException ex)
         {
-            
-            return BadRequest(ex.Message); 
+            return BadRequest(ex.Message);
         }
     }
 }
