@@ -48,5 +48,38 @@ namespace InventoryApi.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<AppUser>> UpdateAppUser(int id, [FromBody] AppUser appUser)
+        {
+            try
+            {
+                var updatedAppUser = await _appUserService.UpdateAppUserAsync(id, appUser);
+
+                if (updatedAppUser == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(updatedAppUser);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAppUser(int id)
+        {
+            var deleted = await _appUserService.DeleteAppUserAsync(id);
+
+            if (!deleted)
+            {
+                return NotFound();
+            }
+
+            return NoContent();
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using InventoryApi.Data;
 using InventoryApi.Models;
-using Microsoft.EntityFrameworkCore; 
+using Microsoft.EntityFrameworkCore;
 
 namespace InventoryApi.Repositories
 {
@@ -12,7 +12,6 @@ namespace InventoryApi.Repositories
         {
             _context = context;
         }
-
 
         public async Task<List<AppUser>> GetAllAsync()
         {
@@ -28,11 +27,40 @@ namespace InventoryApi.Repositories
         {
             var appUserToInsert = appUser with { Id = 0 };
 
-
             _context.AppUsers.Add(appUserToInsert);
             await _context.SaveChangesAsync();
 
             return appUserToInsert;
+        }
+
+        public async Task<AppUser?> UpdateAsync(int id, AppUser appUser)
+        {
+            var existingAppUser = await _context.AppUsers.FindAsync(id);
+
+            if (existingAppUser == null)
+            {
+                return null;
+            }
+
+            _context.Entry(existingAppUser).CurrentValues.SetValues(appUser with { Id = id });
+            await _context.SaveChangesAsync();
+
+            return existingAppUser;
+        }
+
+        public async Task<bool> DeleteAsync(int id)
+        {
+            var appUser = await _context.AppUsers.FindAsync(id);
+
+            if (appUser == null)
+            {
+                return false;
+            }
+
+            _context.AppUsers.Remove(appUser);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }
