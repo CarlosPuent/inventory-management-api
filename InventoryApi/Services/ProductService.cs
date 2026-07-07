@@ -26,19 +26,33 @@ namespace InventoryApi.Services
 
         public async Task<Product> CreateProductAsync(Product product)
         {
+            await ValidateProductBusinessRulesAsync(product);
+            return await _productRepository.AddAsync(product);
+        }
+
+        public async Task<Product?> UpdateProductAsync(int id, Product product)
+        {
+            await ValidateProductBusinessRulesAsync(product);
+            return await _productRepository.UpdateAsync(id, product);
+        }
+
+        public async Task<bool> DeleteProductAsync(int id)
+        {
+            return await _productRepository.DeleteAsync(id);
+        }
+
+        private async Task ValidateProductBusinessRulesAsync(Product product)
+        {
             if (product.Price <= 0)
             {
                 throw new ArgumentException("El precio del producto debe ser mayor a cero.");
             }
 
             var categoryExists = await _categoryRepository.GetByIdAsync(product.CategoryId);
-
             if (categoryExists == null)
             {
                 throw new ArgumentException("La categoría especificada no existe.");
             }
-
-            return await _productRepository.AddAsync(product);
         }
     }
 }
