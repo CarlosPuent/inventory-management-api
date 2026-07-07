@@ -17,7 +17,7 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddSingleton<ISupplierRepository, SupplierRepository>();
 builder.Services.AddScoped<ISupplierService, SupplierService>();
 
-builder.Services.AddSingleton<IAppUserRepository, AppUserRepository>();
+builder.Services.AddScoped<IAppUserRepository, AppUserRepository>();
 builder.Services.AddScoped<IAppUserService, AppUserService>();
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
