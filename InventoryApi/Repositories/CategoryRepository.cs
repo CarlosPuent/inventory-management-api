@@ -1,38 +1,37 @@
-﻿using InventoryApi.Models;
-using InventoryApi.Repositories;
-
+﻿using InventoryApi.Data;
+using InventoryApi.Models;
+using Microsoft.EntityFrameworkCore; 
 namespace InventoryApi.Repositories
 {
     public class CategoryRepository : ICategoryRepository
     {
+        private readonly InventoryDbContext _context;
 
-        private readonly List<Category> _categories = new()
+        public CategoryRepository(InventoryDbContext context)
         {
-            new Category(1, "Electrónicos", "Dispositivos principales como laptops, tablets y smartphones", true),
-            new Category(2, "Periféricos", "Accesorios de computadora como teclados mecánicos, ratones y monitores", true),
-            new Category(3, "Software", "Licencias de programas, sistemas operativos y suscripciones digitales", true),
-            new Category(4, "Redes", "Equipamiento de conectividad incluyendo routers, switches y cableado estructurado", true),
-            new Category(5, "Mobiliario de Oficina", "Sillas ergonómicas, escritorios y soportes para equipo técnico", false)
-        };
-
-
-        public Task<List<Category>> GetAllAsync()
-        {
-            return Task.FromResult(_categories);
+            _context = context;
         }
 
-        public Task<Category?> GetByIdAsync(int id)
+        public async Task<List<Category>> GetAllAsync()
         {
-            var category = _categories.FirstOrDefault(c => c.Id == id);
-            return Task.FromResult(category);
+           
+            return await _context.Categories.ToListAsync();
         }
 
-        public Task<Category> AddAsync(Category category)
+        public async Task<Category?> GetByIdAsync(int id)
         {
-            var nextId = _categories.Count == 0 ? 1 : _categories.Max(c => c.Id) + 1;
-            var created = category with { Id = nextId };
-            _categories.Add(created);
-            return Task.FromResult(created);
+            
+            return await _context.Categories.FindAsync(id);
+        }
+
+        public async Task<Category> AddAsync(Category category)
+        {
+            var categoryToInsert = category with { Id = 0 };
+
+            _context.Categories.Add(categoryToInsert);
+            await _context.SaveChangesAsync();
+
+            return categoryToInsert;
         }
     }
 }
