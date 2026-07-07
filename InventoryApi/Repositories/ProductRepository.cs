@@ -1,32 +1,39 @@
-﻿using InventoryApi.Models;
+﻿using InventoryApi.Data;
+using InventoryApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace InventoryApi.Repositories;
 
 public class ProductRepository : IProductRepository
 {
-    private readonly List<Product> _products = new()
-    {
-        new Product(1, "Laptop Dell", 650.00m, 15),
-        new Product(2, "Mouse Logitech", 12.50m, 3),
-        new Product(3, "Teclado Mecánico", 45.00m, 0)
-    };
+    private readonly InventoryDbContext _context;
 
-    public Task<List<Product>> GetAllAsync()
+    public ProductRepository(InventoryDbContext context)
     {
-        return Task.FromResult(_products);
+        _context = context;
     }
 
-    public Task<Product?> GetByIdAsync(int id)
+    public async Task<List<Product>> GetAllAsync()
     {
-        var product = _products.FirstOrDefault(p => p.Id == id);
-        return Task.FromResult(product);
+        
+        return await _context.Products.ToListAsync();
     }
 
-    public Task<Product> AddAsync(Product product)
+    public async Task<Product?> GetByIdAsync(int id)
     {
-        var nextId = _products.Count == 0 ? 1 : _products.Max(p => p.Id) + 1;
-        var created = product with { Id = nextId };
-        _products.Add(created);
-        return Task.FromResult(created);
+       
+        return await _context.Products.FindAsync(id);
+    }
+
+    public async Task<Product> AddAsync(Product product)
+    {
+       
+        var productToInsert = product with { Id = 0 };
+
+        
+        _context.Products.Add(productToInsert);
+        await _context.SaveChangesAsync();
+
+        return productToInsert;
     }
 }
