@@ -7,5 +7,7 @@ namespace InventoryApi.Repositories
         Task<List<AppUser>> GetAllAsync();
         Task<AppUser?> GetByIdAsync(int id);
         Task<AppUser> AddAsync(AppUser appUser);
+        Task<AppUser?> UpdateAsync(int id, AppUser appUser);
+        Task<bool> DeleteAsync(int id);
     }
 }
