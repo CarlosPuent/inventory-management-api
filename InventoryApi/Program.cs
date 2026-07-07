@@ -1,5 +1,7 @@
 using InventoryApi.Repositories;
 using InventoryApi.Services;
+using InventoryApi.Data;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,9 +20,11 @@ builder.Services.AddScoped<ISupplierService, SupplierService>();
 builder.Services.AddSingleton<IAppUserRepository, AppUserRepository>();
 builder.Services.AddScoped<IAppUserService, AppUserService>();
 
-
-builder.Services.AddSingleton<ICategoryRepository, CategoryRepository>();
+builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+
+builder.Services.AddDbContext<InventoryDbContext>(options =>
+options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
