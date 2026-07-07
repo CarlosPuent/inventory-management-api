@@ -27,7 +27,7 @@ namespace InventoryApi.Services
         {
             if (string.IsNullOrWhiteSpace(category.Name)) 
             {
-                throw new ArgumentNullException("El nombre de la categoría no puede ir vacío");
+                throw new ArgumentException("El nombre de la categoría no puede estar vacío.");
             }
             if (string.IsNullOrWhiteSpace(category.Description) || category.Description.Length < 5 || category.Description.Length > 50)
             {

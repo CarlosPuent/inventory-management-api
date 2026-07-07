@@ -31,6 +31,7 @@ namespace InventoryApi.Repositories
         {
             var nextId = _categories.Count == 0 ? 1 : _categories.Max(c => c.Id) + 1;
             var created = category with { Id = nextId };
+            _categories.Add(created);
             return Task.FromResult(created);
         }
     }
