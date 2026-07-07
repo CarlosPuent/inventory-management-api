@@ -32,4 +32,34 @@ public class ProductRepository : IProductRepository
 
         return productToInsert;
     }
+
+    public async Task<Product?> UpdateAsync(int id, Product product)
+    {
+        var existingProduct = await _context.Products.FindAsync(id);
+
+        if (existingProduct == null)
+        {
+            return null;
+        }
+
+        _context.Entry(existingProduct).CurrentValues.SetValues(product with { Id = id });
+        await _context.SaveChangesAsync();
+
+        return existingProduct;
+    }
+
+    public async Task<bool> DeleteAsync(int id)
+    {
+        var product = await _context.Products.FindAsync(id);
+
+        if (product == null)
+        {
+            return false;
+        }
+
+        _context.Products.Remove(product);
+        await _context.SaveChangesAsync();
+
+        return true;
+    }
 }

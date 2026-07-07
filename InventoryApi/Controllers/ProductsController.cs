@@ -48,4 +48,37 @@ public class ProductsController : ControllerBase
             return BadRequest(ex.Message);
         }
     }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<Product>> UpdateProduct(int id, [FromBody] Product product)
+    {
+        try
+        {
+            var updatedProduct = await _productService.UpdateProductAsync(id, product);
+
+            if (updatedProduct == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(updatedProduct);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteProduct(int id)
+    {
+        var deleted = await _productService.DeleteProductAsync(id);
+
+        if (!deleted)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
 }
