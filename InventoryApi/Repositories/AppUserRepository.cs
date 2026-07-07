@@ -1,34 +1,38 @@
-﻿using InventoryApi.Models;
+﻿using InventoryApi.Data;
+using InventoryApi.Models;
+using Microsoft.EntityFrameworkCore; 
 
 namespace InventoryApi.Repositories
 {
     public class AppUserRepository : IAppUserRepository
     {
-        private readonly List<AppUser> _users = new()
-        {
-            new AppUser(1, "Carlos", "Puente", "accpmurillo233@gmail.com", "74848800", 22, 202.2, true),
-            new AppUser(2, "Pedro", "Porro", "pedro@gmail.com", "71542589", 32, 182.2, true),
-            new AppUser(3, "Juan", "Camaney", "juan@gmail.com", "73984125", 28, 212.2, true),
-            new AppUser(4, "Julio", "Perez", "julio@gmail.com", "74147414", 32, 209.3, true)
-        };
+        private readonly InventoryDbContext _context;
 
-        public Task<List<AppUser>> GetAllAsync()
+        public AppUserRepository(InventoryDbContext context)
         {
-            return Task.FromResult(_users);
+            _context = context;
         }
 
-        public Task<AppUser?> GetByIdAsync(int id)
+
+        public async Task<List<AppUser>> GetAllAsync()
         {
-            var appUser = _users.FirstOrDefault(u => u.Id == id);
-            return Task.FromResult(appUser);
+            return await _context.AppUsers.ToListAsync();
         }
 
-        public Task<AppUser> AddAsync(AppUser appUser)
+        public async Task<AppUser?> GetByIdAsync(int id)
         {
-            var nextId = _users.Count == 0 ? 1 : _users.Max(u => u.Id) + 1;
-            var created = appUser with { Id = nextId };
-            _users.Add(created);
-            return Task.FromResult(created);
+            return await _context.AppUsers.FindAsync(id);
+        }
+
+        public async Task<AppUser> AddAsync(AppUser appUser)
+        {
+            var appUserToInsert = appUser with { Id = 0 };
+
+
+            _context.AppUsers.Add(appUserToInsert);
+            await _context.SaveChangesAsync();
+
+            return appUserToInsert;
         }
     }
 }
