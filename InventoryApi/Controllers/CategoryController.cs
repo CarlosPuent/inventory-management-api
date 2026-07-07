@@ -31,7 +31,7 @@ namespace InventoryApi.Controllers
 
             if (category == null)
             {
-                NotFound();
+                return NotFound();
             }
 
             return Ok(category);
