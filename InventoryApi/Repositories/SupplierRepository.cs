@@ -1,33 +1,38 @@
-﻿using InventoryApi.Models;
+﻿using InventoryApi.Data;
+using InventoryApi.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace InventoryApi.Repositories
 {
     public class SupplierRepository : ISupplierRepository
     {
-        private readonly List<Supplier> _suppliers = new()
-        {
-            new Supplier(1, "Distribuidora Tech", "contacto@distribuidoratech.com", true),
-            new Supplier(2, "Suministros Globales", "ventas@suministrosglobales.sv", true),
-            new Supplier(3, "Importaciones Rápidas", "info@importacionesrapidas.com", false)
-        };
+        private readonly InventoryDbContext _context;
 
-        public Task<List<Supplier>> GetAllAsync()
+        public SupplierRepository(InventoryDbContext context)
         {
-            return Task.FromResult(_suppliers);
+            _context = context;
         }
 
-        public Task<Supplier?> GetByIdAsync(int id)
+
+        public async Task<List<Supplier>> GetAllAsync()
         {
-            var supplier = _suppliers.FirstOrDefault(s => s.Id == id);
-            return Task.FromResult(supplier);
+            return await _context.Suppliers.ToListAsync();
         }
 
-        public Task<Supplier> AddAsync(Supplier supplier)
+        public async Task<Supplier?> GetByIdAsync(int id)
         {
-            var nextId = _suppliers.Count == 0 ? 1 : _suppliers.Max(s => s.Id) + 1;
-            var created = supplier with { Id = nextId };
-            _suppliers.Add(created);
-            return Task.FromResult(created);
+            return await _context.Suppliers.FindAsync(id);
+        }
+
+        public async Task<Supplier> AddAsync(Supplier supplier)
+        {
+            var supplierToInsert = supplier with { Id = 0 };
+
+
+            _context.Suppliers.Add(supplierToInsert);
+            await _context.SaveChangesAsync();
+
+            return supplierToInsert;
         }
     }
 }
