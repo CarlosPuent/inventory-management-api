@@ -62,5 +62,10 @@ namespace InventoryApi.Repositories
 
             return true;
         }
+
+        public async Task<AppUser?> GetByEmailAsync(string email)
+        {
+            return await _context.AppUsers.FirstOrDefaultAsync(u => u.ContactEmail == email);
+        }
     }
 }
