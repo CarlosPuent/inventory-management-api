@@ -1,4 +1,5 @@
 using InventoryApi.Data;
+using InventoryApi.Middleware;
 using InventoryApi.Models;
 using InventoryApi.Repositories;
 using InventoryApi.Services;
@@ -9,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using Serilog;
 using System.Text;
-using InventoryApi.Middleware;
+using System.Text.Json.Serialization;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -24,7 +25,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog();
 
 // Add services to the container.
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();

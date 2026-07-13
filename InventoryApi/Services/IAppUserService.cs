@@ -1,4 +1,5 @@
 ﻿using InventoryApi.Models;
+using InventoryApi.Models.Enums;
 
 namespace InventoryApi.Services
 {
@@ -7,7 +8,7 @@ namespace InventoryApi.Services
         Task<List<AppUser>> GetAllAppUsersAsync();
         Task<AppUser?> GetAppUserByIdAsync(int id);
         Task<AppUser?> UpdateAppUserAsync(int id, AppUser appUser);
-        Task<AppUser?> ChangeUserRoleAsync(int id, string newRole);
+        Task<AppUser?> ChangeUserRoleAsync(int id, UserRole newRole);
         Task<bool> DeleteAppUserAsync(int id);
     }
 }

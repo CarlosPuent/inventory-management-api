@@ -22,7 +22,7 @@ public class TokenService : ITokenService
             new Claim(ClaimTypes.NameIdentifier, appUser.Id.ToString()),
             new Claim(ClaimTypes.Email, appUser.ContactEmail),
             new Claim(ClaimTypes.Name, appUser.Name),
-            new Claim(ClaimTypes.Role, appUser.Role)
+            new Claim(ClaimTypes.Role, appUser.Role.ToString())
         };
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]!));

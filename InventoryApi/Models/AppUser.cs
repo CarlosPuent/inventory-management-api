@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization; 
+﻿using System.Text.Json.Serialization;
+using InventoryApi.Models.Enums;
 
 namespace InventoryApi.Models
 {
@@ -11,8 +12,8 @@ namespace InventoryApi.Models
         int Age,
         double Weight,
         bool IsActive,
-        [property: JsonIgnore] string PasswordHash = "", 
-        string Role = "User"
+        [property: JsonIgnore] string PasswordHash = "",
+        UserRole Role = UserRole.User
     )
     {
         public string GetStatusLabel()

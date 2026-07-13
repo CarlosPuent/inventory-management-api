@@ -1,5 +1,6 @@
 ﻿using InventoryApi.Exceptions;
 using InventoryApi.Models;
+using InventoryApi.Models.Enums;
 using InventoryApi.Repositories;
 
 namespace InventoryApi.Services
@@ -43,13 +44,8 @@ namespace InventoryApi.Services
             return await _appUserRepository.UpdateAsync(id, appUserToUpdate);
         }
 
-        public async Task<AppUser?> ChangeUserRoleAsync(int id, string newRole)
+        public async Task<AppUser?> ChangeUserRoleAsync(int id, UserRole newRole)
         {
-            if (newRole != "User" && newRole != "Admin")
-            {
-                throw new BusinessRuleException("El rol debe ser 'User' o 'Admin'.");
-            }
-
             var existingAppUser = await _appUserRepository.GetByIdAsync(id);
 
             if (existingAppUser == null)

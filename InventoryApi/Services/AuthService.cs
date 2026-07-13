@@ -1,5 +1,6 @@
 ﻿using InventoryApi.DTOs;
 using InventoryApi.Models;
+using InventoryApi.Models.Enums;
 using InventoryApi.Repositories;
 using Microsoft.AspNetCore.Identity;
 
@@ -33,7 +34,7 @@ public class AuthService : IAuthService
             Weight: request.Weight,
             IsActive: true,
             PasswordHash: "",
-            Role: "User"
+            Role: UserRole.User
         );
 
         var hashedPassword = _passwordHasher.HashPassword(newAppUser, request.Password);
@@ -42,7 +43,7 @@ public class AuthService : IAuthService
         var createdAppUser = await _appUserRepository.AddAsync(appUserToCreate);
         var token = _tokenService.GenerateToken(createdAppUser);
 
-        return new AuthResponseDto(token, createdAppUser.Id, createdAppUser.Name, createdAppUser.Role);
+        return new AuthResponseDto(token, createdAppUser.Id, createdAppUser.Name, createdAppUser.Role.ToString());
     }
 
     public async Task<AuthResponseDto?> LoginAsync(LoginRequestDto request)
@@ -63,6 +64,6 @@ public class AuthService : IAuthService
 
         var token = _tokenService.GenerateToken(appUser);
 
-        return new AuthResponseDto(token, appUser.Id, appUser.Name, appUser.Role);
+        return new AuthResponseDto(token, appUser.Id, appUser.Name, appUser.Role.ToString());
     }
 }
