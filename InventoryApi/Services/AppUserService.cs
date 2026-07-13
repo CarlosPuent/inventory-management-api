@@ -22,16 +22,43 @@ namespace InventoryApi.Services
             return _appUserRepository.GetByIdAsync(id);
         }
 
-        public Task<AppUser> CreateAppUserAsync(AppUser appUser)
-        {
-            ValidateAppUserBusinessRules(appUser);
-            return _appUserRepository.AddAsync(appUser);
-        }
-
         public async Task<AppUser?> UpdateAppUserAsync(int id, AppUser appUser)
         {
+            var existingAppUser = await _appUserRepository.GetByIdAsync(id);
+
+            if (existingAppUser == null)
+            {
+                return null;
+            }
+
             ValidateAppUserBusinessRules(appUser);
-            return await _appUserRepository.UpdateAsync(id, appUser);
+
+            var appUserToUpdate = appUser with
+            {
+                Role = existingAppUser.Role,
+                PasswordHash = existingAppUser.PasswordHash
+            };
+
+            return await _appUserRepository.UpdateAsync(id, appUserToUpdate);
+        }
+
+        public async Task<AppUser?> ChangeUserRoleAsync(int id, string newRole)
+        {
+            if (newRole != "User" && newRole != "Admin")
+            {
+                throw new ArgumentException("El rol debe ser 'User' o 'Admin'.");
+            }
+
+            var existingAppUser = await _appUserRepository.GetByIdAsync(id);
+
+            if (existingAppUser == null)
+            {
+                return null;
+            }
+
+            var appUserToUpdate = existingAppUser with { Role = newRole };
+
+            return await _appUserRepository.UpdateAsync(id, appUserToUpdate);
         }
 
         public async Task<bool> DeleteAppUserAsync(int id)

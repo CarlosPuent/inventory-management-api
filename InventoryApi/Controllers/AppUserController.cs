@@ -1,9 +1,12 @@
-﻿using InventoryApi.Models;
+﻿using InventoryApi.DTOs;
+using InventoryApi.Models;
 using InventoryApi.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InventoryApi.Controllers
 {
+    [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/[controller]")]
     public class AppUsersController : ControllerBase
@@ -35,13 +38,19 @@ namespace InventoryApi.Controllers
             return Ok(appUser);
         }
 
-        [HttpPost]
-        public async Task<ActionResult<AppUser>> CreateAppUser([FromBody] AppUser appUser)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<AppUser>> UpdateAppUser(int id, [FromBody] AppUser appUser)
         {
             try
             {
-                var createdAppUser = await _appUserService.CreateAppUserAsync(appUser);
-                return CreatedAtAction(nameof(GetAppUserById), new { id = createdAppUser.Id }, createdAppUser);
+                var updatedAppUser = await _appUserService.UpdateAppUserAsync(id, appUser);
+
+                if (updatedAppUser == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(updatedAppUser);
             }
             catch (ArgumentException ex)
             {
@@ -49,12 +58,12 @@ namespace InventoryApi.Controllers
             }
         }
 
-        [HttpPut("{id}")]
-        public async Task<ActionResult<AppUser>> UpdateAppUser(int id, [FromBody] AppUser appUser)
+        [HttpPatch("{id}/role")]
+        public async Task<ActionResult<AppUser>> ChangeUserRole(int id, [FromBody] ChangeRoleRequestDto request)
         {
             try
             {
-                var updatedAppUser = await _appUserService.UpdateAppUserAsync(id, appUser);
+                var updatedAppUser = await _appUserService.ChangeUserRoleAsync(id, request.Role);
 
                 if (updatedAppUser == null)
                 {
