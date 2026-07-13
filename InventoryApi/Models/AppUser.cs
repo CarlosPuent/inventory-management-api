@@ -1,6 +1,19 @@
-﻿namespace InventoryApi.Models
+﻿using System.Text.Json.Serialization; 
+
+namespace InventoryApi.Models
 {
-    public record AppUser(int Id, string Name, string LastName, string ContactEmail, string PhoneNumber, int Age, double Weight, bool IsActive)
+    public record AppUser(
+        int Id,
+        string Name,
+        string LastName,
+        string ContactEmail,
+        string PhoneNumber,
+        int Age,
+        double Weight,
+        bool IsActive,
+        [property: JsonIgnore] string PasswordHash = "", 
+        string Role = "User"
+    )
     {
         public string GetStatusLabel()
         {
