@@ -55,12 +55,6 @@ namespace InventoryApi.Services
             return _appUserRepository.GetByIdAsync(id);
         }
 
-        public Task<AppUser> CreateAppUserAsync(AppUser appUser)
-        {
-            ValidateAppUserBusinessRules(appUser);
-            return _appUserRepository.AddAsync(appUser);
-        }
-
         public async Task<AppUser?> UpdateAppUserAsync(int id, AppUser appUser)
         {
             var existingAppUser = await _appUserRepository.GetByIdAsync(id);

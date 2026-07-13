@@ -1,5 +1,6 @@
 ﻿using InventoryApi.Data;
 using InventoryApi.DTOs;
+using InventoryApi.Exceptions;
 using InventoryApi.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -89,9 +90,16 @@ namespace InventoryApi.Repositories
                 return false;
             }
 
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
-            return true;
+            try
+            {
+                _context.Categories.Remove(category);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (DbUpdateException)
+            {
+                throw new ConflictException("No se puede eliminar la categoría porque tiene productos asociados.");
+            }
         }
     }
 }

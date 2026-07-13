@@ -108,7 +108,6 @@ namespace InventoryApi.Repositories
             return true;
         }
 
-        // Tu nuevo método intacto
         public async Task<AppUser?> GetByEmailAsync(string email)
         {
             return await _context.AppUsers.FirstOrDefaultAsync(u => u.ContactEmail == email);
