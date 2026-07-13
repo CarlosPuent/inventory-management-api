@@ -40,55 +40,34 @@ namespace InventoryApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Category>> CreateCategory([FromBody] Category category)
         {
-            try
-            {
-                var createdCategory = await _categoryService.CreateCategoryAsync(category);
-                return CreatedAtAction(nameof(GetCategoryById), new { id = createdCategory.Id }, createdCategory);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var createdCategory = await _categoryService.CreateCategoryAsync(category);
+            return CreatedAtAction(nameof(GetCategoryById), new { id = createdCategory.Id }, createdCategory);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<Category>> UpdateCategory(int id, [FromBody] Category category)
         {
-            try
-            {
-                var updatedCategory = await _categoryService.UpdateCategoryAsync(id, category);
+            var updatedCategory = await _categoryService.UpdateCategoryAsync(id, category);
 
-                if (updatedCategory == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(updatedCategory);
-            }
-            catch (ArgumentException ex)
+            if (updatedCategory == null)
             {
-                return BadRequest(ex.Message);
+                return NotFound();
             }
+
+            return Ok(updatedCategory);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {
-            try
-            {
-                var deleted = await _categoryService.DeleteCategoryAsync(id);
+            var deleted = await _categoryService.DeleteCategoryAsync(id);
 
-                if (!deleted)
-                {
-                    return NotFound();
-                }
-
-                return NoContent();
-            }
-            catch (InvalidOperationException ex)
+            if (!deleted)
             {
-                return Conflict(ex.Message);
+                return NotFound();
             }
+
+            return NoContent();
         }
     }
 }

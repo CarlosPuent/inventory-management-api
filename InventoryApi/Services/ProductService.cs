@@ -1,4 +1,5 @@
-﻿using InventoryApi.Models;
+﻿using InventoryApi.Exceptions;
+using InventoryApi.Models;
 using InventoryApi.Repositories;
 
 namespace InventoryApi.Services
@@ -45,13 +46,13 @@ namespace InventoryApi.Services
         {
             if (product.Price <= 0)
             {
-                throw new ArgumentException("El precio del producto debe ser mayor a cero.");
+                throw new BusinessRuleException("El precio del producto debe ser mayor a cero.");
             }
 
             var categoryExists = await _categoryRepository.GetByIdAsync(product.CategoryId);
             if (categoryExists == null)
             {
-                throw new ArgumentException("La categoría especificada no existe.");
+                throw new BusinessRuleException("La categoría especificada no existe.");
             }
         }
     }

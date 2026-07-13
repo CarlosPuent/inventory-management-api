@@ -40,35 +40,21 @@ namespace InventoryApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Supplier>> CreateSupplier([FromBody] Supplier supplier)
         {
-            try
-            {
-                var createdSupplier = await _supplierService.CreateSupplierAsync(supplier);
-                return CreatedAtAction(nameof(GetSupplierById), new { id = createdSupplier.Id }, createdSupplier);
-            }
-            catch (ArgumentException ex)
-            {
-                return BadRequest(ex.Message);
-            }
+            var createdSupplier = await _supplierService.CreateSupplierAsync(supplier);
+            return CreatedAtAction(nameof(GetSupplierById), new { id = createdSupplier.Id }, createdSupplier);
         }
 
         [HttpPut("{id}")]
         public async Task<ActionResult<Supplier>> UpdateSupplier(int id, [FromBody] Supplier supplier)
         {
-            try
-            {
-                var updatedSupplier = await _supplierService.UpdateSupplierAsync(id, supplier);
+            var updatedSupplier = await _supplierService.UpdateSupplierAsync(id, supplier);
 
-                if (updatedSupplier == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(updatedSupplier);
-            }
-            catch (ArgumentException ex)
+            if (updatedSupplier == null)
             {
-                return BadRequest(ex.Message);
+                return NotFound();
             }
+
+            return Ok(updatedSupplier);
         }
 
         [HttpDelete("{id}")]

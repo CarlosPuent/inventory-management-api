@@ -40,35 +40,21 @@ public class ProductsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Product>> CreateProduct([FromBody] Product product)
     {
-        try
-        {
-            var createdProduct = await _productService.CreateProductAsync(product);
-            return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, createdProduct);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
+        var createdProduct = await _productService.CreateProductAsync(product);
+        return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, createdProduct);
     }
 
     [HttpPut("{id}")]
     public async Task<ActionResult<Product>> UpdateProduct(int id, [FromBody] Product product)
     {
-        try
-        {
-            var updatedProduct = await _productService.UpdateProductAsync(id, product);
+        var updatedProduct = await _productService.UpdateProductAsync(id, product);
 
-            if (updatedProduct == null)
-            {
-                return NotFound();
-            }
-
-            return Ok(updatedProduct);
-        }
-        catch (ArgumentException ex)
+        if (updatedProduct == null)
         {
-            return BadRequest(ex.Message);
+            return NotFound();
         }
+
+        return Ok(updatedProduct);
     }
 
     [HttpDelete("{id}")]

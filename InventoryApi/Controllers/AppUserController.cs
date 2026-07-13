@@ -41,41 +41,27 @@ namespace InventoryApi.Controllers
         [HttpPut("{id}")]
         public async Task<ActionResult<AppUser>> UpdateAppUser(int id, [FromBody] AppUser appUser)
         {
-            try
-            {
-                var updatedAppUser = await _appUserService.UpdateAppUserAsync(id, appUser);
+            var updatedAppUser = await _appUserService.UpdateAppUserAsync(id, appUser);
 
-                if (updatedAppUser == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(updatedAppUser);
-            }
-            catch (ArgumentException ex)
+            if (updatedAppUser == null)
             {
-                return BadRequest(ex.Message);
+                return NotFound();
             }
+
+            return Ok(updatedAppUser);
         }
 
         [HttpPatch("{id}/role")]
         public async Task<ActionResult<AppUser>> ChangeUserRole(int id, [FromBody] ChangeRoleRequestDto request)
         {
-            try
-            {
-                var updatedAppUser = await _appUserService.ChangeUserRoleAsync(id, request.Role);
+            var updatedAppUser = await _appUserService.ChangeUserRoleAsync(id, request.Role);
 
-                if (updatedAppUser == null)
-                {
-                    return NotFound();
-                }
-
-                return Ok(updatedAppUser);
-            }
-            catch (ArgumentException ex)
+            if (updatedAppUser == null)
             {
-                return BadRequest(ex.Message);
+                return NotFound();
             }
+
+            return Ok(updatedAppUser);
         }
 
         [HttpDelete("{id}")]

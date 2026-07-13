@@ -1,4 +1,5 @@
-﻿using InventoryApi.Models;
+﻿using InventoryApi.Exceptions;
+using InventoryApi.Models;
 using InventoryApi.Repositories;
 
 namespace InventoryApi.Services
@@ -43,12 +44,12 @@ namespace InventoryApi.Services
         {
             if (string.IsNullOrWhiteSpace(supplier.Name))
             {
-                throw new ArgumentException("El nombre del proveedor no puede estar vacío.");
+                throw new BusinessRuleException("El nombre del proveedor no puede estar vacío.");
             }
 
             if (string.IsNullOrWhiteSpace(supplier.ContactEmail) || !supplier.ContactEmail.Contains("@"))
             {
-                throw new ArgumentException("Debe proporcionar un correo electrónico válido que contenga '@'.");
+                throw new BusinessRuleException("Debe proporcionar un correo electrónico válido que contenga '@'.");
             }
         }
     }
