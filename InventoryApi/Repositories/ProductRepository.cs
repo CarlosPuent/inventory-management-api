@@ -1,4 +1,5 @@
 ﻿using InventoryApi.Data;
+using InventoryApi.DTOs;
 using InventoryApi.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -7,6 +8,20 @@ namespace InventoryApi.Repositories;
 public class ProductRepository : IProductRepository
 {
     private readonly InventoryDbContext _context;
+
+    public async Task<PagedResult<Product>> GetPagedAsync(int page, int pageSize)
+    {
+        var totalCount = await _context.Products.CountAsync();
+
+        var items = await _context.Products
+            .Include(p => p.Category)
+            .OrderBy(p => p.Id)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedResult<Product>(items, totalCount, page, pageSize);
+    }
 
     public ProductRepository(InventoryDbContext context)
     {

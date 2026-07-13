@@ -1,7 +1,7 @@
-﻿using InventoryApi.Exceptions;
+﻿using InventoryApi.DTOs;
+using InventoryApi.Exceptions;
 using InventoryApi.Models;
 using InventoryApi.Repositories;
-using Microsoft.EntityFrameworkCore;
 
 namespace InventoryApi.Services
 {
@@ -12,6 +12,21 @@ namespace InventoryApi.Services
         public CategoryService(ICategoryRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
+        }
+
+        public async Task<PagedResult<Category>> GetPagedCategoriesAsync(int page, int pageSize)
+        {
+            if (page < 1)
+            {
+                throw new BusinessRuleException("El número de página debe ser mayor o igual a 1.");
+            }
+
+            if (pageSize < 1 || pageSize > 100)
+            {
+                throw new BusinessRuleException("El tamaño de página debe estar entre 1 y 100.");
+            }
+
+            return await _categoryRepository.GetPagedAsync(page, pageSize);
         }
 
         public Task<List<Category>> GetAllCategoriesAsync()

@@ -1,4 +1,5 @@
-﻿using InventoryApi.Models;
+﻿using InventoryApi.DTOs;
+using InventoryApi.Models;
 using InventoryApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,13 @@ namespace InventoryApi.Controllers
         public SuppliersController(ISupplierService supplierService)
         {
             _supplierService = supplierService;
+        }
+
+        [HttpGet("paged")]
+        public async Task<ActionResult<PagedResult<Supplier>>> GetPagedSuppliers([FromQuery] PaginationRequestDto pagination)
+        {
+            var result = await _supplierService.GetPagedSuppliersAsync(pagination.Page, pagination.PageSize);
+            return Ok(result);
         }
 
         [HttpGet]

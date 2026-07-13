@@ -1,4 +1,5 @@
-﻿using InventoryApi.Exceptions;
+﻿using InventoryApi.DTOs;
+using InventoryApi.Exceptions;
 using InventoryApi.Models;
 using InventoryApi.Models.Enums;
 using InventoryApi.Repositories;
@@ -14,6 +15,21 @@ namespace InventoryApi.Services
             _appUserRepository = appUserRepository;
         }
 
+        public async Task<PagedResult<AppUser>> GetPagedAppUsersAsync(int page, int pageSize)
+        {
+            if (page < 1)
+            {
+                throw new BusinessRuleException("El número de página debe ser mayor o igual a 1.");
+            }
+
+            if (pageSize < 1 || pageSize > 100)
+            {
+                throw new BusinessRuleException("El tamaño de página debe estar entre 1 y 100.");
+            }
+
+            return await _appUserRepository.GetPagedAsync(page, pageSize);
+        }
+
         public Task<List<AppUser>> GetAllAppUsersAsync()
         {
             return _appUserRepository.GetAllAsync();
@@ -22,6 +38,12 @@ namespace InventoryApi.Services
         public Task<AppUser?> GetAppUserByIdAsync(int id)
         {
             return _appUserRepository.GetByIdAsync(id);
+        }
+
+        public Task<AppUser> CreateAppUserAsync(AppUser appUser)
+        {
+            ValidateAppUserBusinessRules(appUser);
+            return _appUserRepository.AddAsync(appUser);
         }
 
         public async Task<AppUser?> UpdateAppUserAsync(int id, AppUser appUser)
@@ -61,6 +83,11 @@ namespace InventoryApi.Services
         public async Task<bool> DeleteAppUserAsync(int id)
         {
             return await _appUserRepository.DeleteAsync(id);
+        }
+
+        public Task<AppUser?> GetAppUserByEmailAsync(string email)
+        {
+            return _appUserRepository.GetByEmailAsync(email);
         }
 
         private void ValidateAppUserBusinessRules(AppUser appUser)

@@ -18,6 +18,14 @@ namespace InventoryApi.Controllers
             _appUserService = appUserService;
         }
 
+        // Endpoint de Paginación
+        [HttpGet("paged")]
+        public async Task<ActionResult<PagedResult<AppUser>>> GetPagedAppUsers([FromQuery] PaginationRequestDto pagination)
+        {
+            var result = await _appUserService.GetPagedAppUsersAsync(pagination.Page, pagination.PageSize);
+            return Ok(result);
+        }
+
         [HttpGet]
         public async Task<ActionResult<List<AppUser>>> GetAllAppUsers()
         {
@@ -29,6 +37,20 @@ namespace InventoryApi.Controllers
         public async Task<ActionResult<AppUser>> GetAppUserById(int id)
         {
             var appUser = await _appUserService.GetAppUserByIdAsync(id);
+
+            if (appUser == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(appUser);
+        }
+
+        // Endpoint para buscar por Email (aprovechando el método nuevo)
+        [HttpGet("email/{email}")]
+        public async Task<ActionResult<AppUser>> GetAppUserByEmail(string email)
+        {
+            var appUser = await _appUserService.GetAppUserByEmailAsync(email);
 
             if (appUser == null)
             {

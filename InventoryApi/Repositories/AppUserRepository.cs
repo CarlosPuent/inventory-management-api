@@ -1,4 +1,5 @@
 ﻿using InventoryApi.Data;
+using InventoryApi.DTOs;
 using InventoryApi.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,20 @@ namespace InventoryApi.Repositories
         public AppUserRepository(InventoryDbContext context)
         {
             _context = context;
+        }
+
+        // Recuperamos la implementación de la paginación
+        public async Task<PagedResult<AppUser>> GetPagedAsync(int page, int pageSize)
+        {
+            var totalCount = await _context.AppUsers.CountAsync();
+
+            var items = await _context.AppUsers
+                .OrderBy(u => u.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<AppUser>(items, totalCount, page, pageSize);
         }
 
         public async Task<List<AppUser>> GetAllAsync()
@@ -63,6 +78,7 @@ namespace InventoryApi.Repositories
             return true;
         }
 
+        // Tu nuevo método intacto
         public async Task<AppUser?> GetByEmailAsync(string email)
         {
             return await _context.AppUsers.FirstOrDefaultAsync(u => u.ContactEmail == email);

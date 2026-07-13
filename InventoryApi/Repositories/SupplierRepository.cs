@@ -1,4 +1,5 @@
 ﻿using InventoryApi.Data;
+using InventoryApi.DTOs;
 using InventoryApi.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,6 +12,19 @@ namespace InventoryApi.Repositories
         public SupplierRepository(InventoryDbContext context)
         {
             _context = context;
+        }
+
+        public async Task<PagedResult<Supplier>> GetPagedAsync(int page, int pageSize)
+        {
+            var totalCount = await _context.Suppliers.CountAsync();
+
+            var items = await _context.Suppliers
+                .OrderBy(s => s.Id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PagedResult<Supplier>(items, totalCount, page, pageSize);
         }
 
         public async Task<List<Supplier>> GetAllAsync()
@@ -26,10 +40,8 @@ namespace InventoryApi.Repositories
         public async Task<Supplier> AddAsync(Supplier supplier)
         {
             var supplierToInsert = supplier with { Id = 0 };
-
             _context.Suppliers.Add(supplierToInsert);
             await _context.SaveChangesAsync();
-
             return supplierToInsert;
         }
 
@@ -44,7 +56,6 @@ namespace InventoryApi.Repositories
 
             _context.Entry(existingSupplier).CurrentValues.SetValues(supplier with { Id = id });
             await _context.SaveChangesAsync();
-
             return existingSupplier;
         }
 
@@ -59,7 +70,6 @@ namespace InventoryApi.Repositories
 
             _context.Suppliers.Remove(supplier);
             await _context.SaveChangesAsync();
-
             return true;
         }
     }
