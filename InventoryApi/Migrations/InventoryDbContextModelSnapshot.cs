@@ -64,7 +64,7 @@ namespace InventoryApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AppUsers");
+                    b.ToTable("AppUsers", (string)null);
                 });
 
             modelBuilder.Entity("InventoryApi.Models.Category", b =>
@@ -88,7 +88,7 @@ namespace InventoryApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("InventoryApi.Models.Product", b =>
@@ -117,7 +117,7 @@ namespace InventoryApi.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("InventoryApi.Models.Supplier", b =>
@@ -141,7 +141,7 @@ namespace InventoryApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Suppliers");
+                    b.ToTable("Suppliers", (string)null);
                 });
 
             modelBuilder.Entity("InventoryApi.Models.Product", b =>

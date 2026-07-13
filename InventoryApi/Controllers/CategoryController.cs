@@ -1,4 +1,5 @@
-﻿using InventoryApi.Models;
+﻿using InventoryApi.DTOs;
+using InventoryApi.Models;
 using InventoryApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,20 @@ namespace InventoryApi.Controllers
         public CategoryController(ICategoryService categoryService)
         {
             _categoryService = categoryService;
+        }
+
+        [HttpGet("filtered")]
+        public async Task<ActionResult<PagedResult<Category>>> GetFilteredCategories([FromQuery] CategoryFilterDto filter)
+        {
+            var result = await _categoryService.GetFilteredCategoriesAsync(filter);
+            return Ok(result);
+        }
+
+        [HttpGet("paged")]
+        public async Task<ActionResult<PagedResult<Category>>> GetPagedCategories([FromQuery] PaginationRequestDto pagination)
+        {
+            var result = await _categoryService.GetPagedCategoriesAsync(pagination.Page, pagination.PageSize);
+            return Ok(result);
         }
 
         [HttpGet]

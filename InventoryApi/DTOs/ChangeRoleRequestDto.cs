@@ -1,3 +1,5 @@
-﻿namespace InventoryApi.DTOs;
+﻿using InventoryApi.Models.Enums;
 
-public record ChangeRoleRequestDto(string Role);
+namespace InventoryApi.DTOs;
+
+public record ChangeRoleRequestDto(UserRole Role);

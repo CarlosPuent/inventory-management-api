@@ -25,5 +25,9 @@ public class InventoryDbContext : DbContext
             .WithMany()
             .HasForeignKey(p => p.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<AppUser>()
+            .Property(u => u.Role)
+            .HasConversion<string>();
     }
 }

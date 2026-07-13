@@ -1,9 +1,12 @@
-﻿using InventoryApi.Models;
+﻿using InventoryApi.DTOs;
+using InventoryApi.Models;
 
 namespace InventoryApi.Services
 {
     public interface ICategoryService
     {
+        Task<PagedResult<Category>> GetFilteredCategoriesAsync(CategoryFilterDto filter);
+        Task<PagedResult<Category>> GetPagedCategoriesAsync(int page, int pageSize);
         Task<List<Category>> GetAllCategoriesAsync();
         Task<Category?> GetCategoryByIdAsync(int id);
         Task<Category> CreateCategoryAsync(Category category);

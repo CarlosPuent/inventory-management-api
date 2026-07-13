@@ -1,4 +1,5 @@
-﻿using InventoryApi.Models;
+﻿using InventoryApi.DTOs;
+using InventoryApi.Models;
 using InventoryApi.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,20 @@ public class ProductsController : ControllerBase
     public ProductsController(IProductService productService)
     {
         _productService = productService;
+    }
+
+    [HttpGet("filtered")]
+    public async Task<ActionResult<PagedResult<Product>>> GetFilteredProducts([FromQuery] ProductFilterDto filter)
+    {
+        var result = await _productService.GetFilteredProductsAsync(filter);
+        return Ok(result);
+    }
+
+    [HttpGet("paged")]
+    public async Task<ActionResult<PagedResult<Product>>> GetPagedProducts([FromQuery] PaginationRequestDto pagination)
+    {
+        var result = await _productService.GetPagedProductsAsync(pagination.Page, pagination.PageSize);
+        return Ok(result);
     }
 
     [HttpGet]

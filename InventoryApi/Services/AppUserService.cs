@@ -1,5 +1,7 @@
-﻿using InventoryApi.Exceptions;
+﻿using InventoryApi.DTOs;
+using InventoryApi.Exceptions;
 using InventoryApi.Models;
+using InventoryApi.Models.Enums;
 using InventoryApi.Repositories;
 
 namespace InventoryApi.Services
@@ -11,6 +13,36 @@ namespace InventoryApi.Services
         public AppUserService(IAppUserRepository appUserRepository)
         {
             _appUserRepository = appUserRepository;
+        }
+
+        public async Task<PagedResult<AppUser>> GetFilteredAppUsersAsync(AppUserFilterDto filter)
+        {
+            if (filter.Page < 1)
+            {
+                throw new BusinessRuleException("El número de página debe ser mayor o igual a 1.");
+            }
+
+            if (filter.PageSize < 1 || filter.PageSize > 100)
+            {
+                throw new BusinessRuleException("El tamaño de página debe estar entre 1 y 100.");
+            }
+
+            return await _appUserRepository.GetFilteredAsync(filter);
+        }
+
+        public async Task<PagedResult<AppUser>> GetPagedAppUsersAsync(int page, int pageSize)
+        {
+            if (page < 1)
+            {
+                throw new BusinessRuleException("El número de página debe ser mayor o igual a 1.");
+            }
+
+            if (pageSize < 1 || pageSize > 100)
+            {
+                throw new BusinessRuleException("El tamaño de página debe estar entre 1 y 100.");
+            }
+
+            return await _appUserRepository.GetPagedAsync(page, pageSize);
         }
 
         public Task<List<AppUser>> GetAllAppUsersAsync()
@@ -43,13 +75,8 @@ namespace InventoryApi.Services
             return await _appUserRepository.UpdateAsync(id, appUserToUpdate);
         }
 
-        public async Task<AppUser?> ChangeUserRoleAsync(int id, string newRole)
+        public async Task<AppUser?> ChangeUserRoleAsync(int id, UserRole newRole)
         {
-            if (newRole != "User" && newRole != "Admin")
-            {
-                throw new BusinessRuleException("El rol debe ser 'User' o 'Admin'.");
-            }
-
             var existingAppUser = await _appUserRepository.GetByIdAsync(id);
 
             if (existingAppUser == null)
@@ -65,6 +92,11 @@ namespace InventoryApi.Services
         public async Task<bool> DeleteAppUserAsync(int id)
         {
             return await _appUserRepository.DeleteAsync(id);
+        }
+
+        public Task<AppUser?> GetAppUserByEmailAsync(string email)
+        {
+            return _appUserRepository.GetByEmailAsync(email);
         }
 
         private void ValidateAppUserBusinessRules(AppUser appUser)
