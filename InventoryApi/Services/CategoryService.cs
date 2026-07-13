@@ -21,6 +21,7 @@ namespace InventoryApi.Services
 
             return await _categoryRepository.GetFilteredAsync(filter);
         }
+
         public async Task<PagedResult<Category>> GetPagedCategoriesAsync(int page, int pageSize)
         {
             if (page < 1)
@@ -48,32 +49,17 @@ namespace InventoryApi.Services
 
         public Task<Category> CreateCategoryAsync(Category category)
         {
-            ValidateCategoryBusinessRules(category);
             return _categoryRepository.AddAsync(category);
         }
 
         public async Task<Category?> UpdateCategoryAsync(int id, Category category)
         {
-            ValidateCategoryBusinessRules(category);
             return await _categoryRepository.UpdateAsync(id, category);
         }
 
         public async Task<bool> DeleteCategoryAsync(int id)
         {
             return await _categoryRepository.DeleteAsync(id);
-        }
-
-        private void ValidateCategoryBusinessRules(Category category)
-        {
-            if (string.IsNullOrWhiteSpace(category.Name))
-            {
-                throw new BusinessRuleException("El nombre de la categoría no puede estar vacío.");
-            }
-
-            if (string.IsNullOrWhiteSpace(category.Description) || category.Description.Length < 5 || category.Description.Length > 100)
-            {
-                throw new BusinessRuleException("La descripción de la categoría es obligatoria y debe tener entre 5 y 100 caracteres.");
-            }
         }
     }
 }
