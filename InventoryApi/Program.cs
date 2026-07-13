@@ -11,6 +11,7 @@ using Microsoft.OpenApi;
 using Serilog;
 using System.Text;
 using System.Text.Json.Serialization;
+using InventoryApi.Mapping;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -66,6 +67,8 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));
 
 builder.Services.AddDbContext<InventoryDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
