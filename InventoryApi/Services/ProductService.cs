@@ -89,11 +89,6 @@ namespace InventoryApi.Services
 
         private async Task ValidateProductBusinessRulesAsync(Product product)
         {
-            if (product.Price <= 0)
-            {
-                throw new BusinessRuleException("El precio del producto debe ser mayor a cero.");
-            }
-
             var categoryExists = await _categoryRepository.GetByIdAsync(product.CategoryId);
             if (categoryExists == null)
             {

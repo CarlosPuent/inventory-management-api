@@ -64,8 +64,6 @@ namespace InventoryApi.Services
                 return null;
             }
 
-            ValidateAppUserBusinessRules(appUser);
-
             var appUserToUpdate = appUser with
             {
                 Role = existingAppUser.Role,
@@ -97,39 +95,6 @@ namespace InventoryApi.Services
         public Task<AppUser?> GetAppUserByEmailAsync(string email)
         {
             return _appUserRepository.GetByEmailAsync(email);
-        }
-
-        private void ValidateAppUserBusinessRules(AppUser appUser)
-        {
-            if (string.IsNullOrWhiteSpace(appUser.Name))
-            {
-                throw new BusinessRuleException("El nombre del usuario no puede estar vacío.");
-            }
-
-            if (string.IsNullOrWhiteSpace(appUser.LastName))
-            {
-                throw new BusinessRuleException("El apellido del usuario no puede estar vacío.");
-            }
-
-            if (string.IsNullOrWhiteSpace(appUser.ContactEmail) || !appUser.ContactEmail.Contains("@"))
-            {
-                throw new BusinessRuleException("Debe proporcionar un correo electrónico válido que contenga '@'.");
-            }
-
-            if (string.IsNullOrWhiteSpace(appUser.PhoneNumber) || appUser.PhoneNumber.Length < 8)
-            {
-                throw new BusinessRuleException("Debe proporcionar un número de teléfono válido de al menos 8 dígitos.");
-            }
-
-            if (appUser.Age <= 0 || appUser.Age > 120)
-            {
-                throw new BusinessRuleException("La edad debe estar entre 1 y 120 años.");
-            }
-
-            if (appUser.Weight <= 0)
-            {
-                throw new BusinessRuleException("El peso debe ser mayor a cero.");
-            }
         }
     }
 }

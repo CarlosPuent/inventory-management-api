@@ -1,4 +1,5 @@
-﻿using InventoryApi.DTOs;
+﻿using AutoMapper;
+using InventoryApi.DTOs;
 using InventoryApi.Models;
 using InventoryApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -12,35 +13,39 @@ namespace InventoryApi.Controllers;
 public class ProductsController : ControllerBase
 {
     private readonly IProductService _productService;
+    private readonly IMapper _mapper;
 
-    public ProductsController(IProductService productService)
+    public ProductsController(IProductService productService, IMapper mapper)
     {
         _productService = productService;
+        _mapper = mapper;
     }
 
     [HttpGet("filtered")]
-    public async Task<ActionResult<PagedResult<Product>>> GetFilteredProducts([FromQuery] ProductFilterDto filter)
+    public async Task<ActionResult<PagedResult<ProductResponseDto>>> GetFilteredProducts([FromQuery] ProductFilterDto filter)
     {
         var result = await _productService.GetFilteredProductsAsync(filter);
-        return Ok(result);
+        var mappedItems = _mapper.Map<List<ProductResponseDto>>(result.Items);
+        return Ok(new PagedResult<ProductResponseDto>(mappedItems, result.TotalCount, result.Page, result.PageSize));
     }
 
     [HttpGet("paged")]
-    public async Task<ActionResult<PagedResult<Product>>> GetPagedProducts([FromQuery] PaginationRequestDto pagination)
+    public async Task<ActionResult<PagedResult<ProductResponseDto>>> GetPagedProducts([FromQuery] PaginationRequestDto pagination)
     {
         var result = await _productService.GetPagedProductsAsync(pagination.Page, pagination.PageSize);
-        return Ok(result);
+        var mappedItems = _mapper.Map<List<ProductResponseDto>>(result.Items);
+        return Ok(new PagedResult<ProductResponseDto>(mappedItems, result.TotalCount, result.Page, result.PageSize));
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Product>>> GetAllProducts()
+    public async Task<ActionResult<List<ProductResponseDto>>> GetAllProducts()
     {
         var products = await _productService.GetAllProductsAsync();
-        return Ok(products);
+        return Ok(_mapper.Map<List<ProductResponseDto>>(products));
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<Product>> GetProductById(int id)
+    public async Task<ActionResult<ProductResponseDto>> GetProductById(int id)
     {
         var product = await _productService.GetProductByIdAsync(id);
 
@@ -49,18 +54,19 @@ public class ProductsController : ControllerBase
             return NotFound();
         }
 
-        return Ok(product);
+        return Ok(_mapper.Map<ProductResponseDto>(product));
     }
 
     [HttpPost]
-    public async Task<ActionResult<Product>> CreateProduct([FromBody] Product product)
+    public async Task<ActionResult<ProductResponseDto>> CreateProduct([FromBody] Product product)
     {
         var createdProduct = await _productService.CreateProductAsync(product);
-        return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, createdProduct);
+        var dto = _mapper.Map<ProductResponseDto>(createdProduct);
+        return CreatedAtAction(nameof(GetProductById), new { id = createdProduct.Id }, dto);
     }
 
     [HttpPut("{id}")]
-    public async Task<ActionResult<Product>> UpdateProduct(int id, [FromBody] Product product)
+    public async Task<ActionResult<ProductResponseDto>> UpdateProduct(int id, [FromBody] Product product)
     {
         var updatedProduct = await _productService.UpdateProductAsync(id, product);
 
@@ -69,7 +75,7 @@ public class ProductsController : ControllerBase
             return NotFound();
         }
 
-        return Ok(updatedProduct);
+        return Ok(_mapper.Map<ProductResponseDto>(updatedProduct));
     }
 
     [HttpDelete("{id}")]

@@ -11,6 +11,10 @@ using Microsoft.OpenApi;
 using Serilog;
 using System.Text;
 using System.Text.Json.Serialization;
+using InventoryApi.Mapping;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using InventoryApi.Validators;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
@@ -30,6 +34,9 @@ builder.Services.AddControllers()
     {
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
+
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<ProductValidator>();
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -66,6 +73,8 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IPasswordHasher<AppUser>, PasswordHasher<AppUser>>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddAutoMapper(cfg => { }, typeof(MappingProfile));
 
 builder.Services.AddDbContext<InventoryDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

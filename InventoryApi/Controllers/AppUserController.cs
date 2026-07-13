@@ -1,4 +1,5 @@
-﻿using InventoryApi.DTOs;
+﻿using AutoMapper;
+using InventoryApi.DTOs;
 using InventoryApi.Models;
 using InventoryApi.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -12,35 +13,39 @@ namespace InventoryApi.Controllers
     public class AppUsersController : ControllerBase
     {
         private readonly IAppUserService _appUserService;
+        private readonly IMapper _mapper;
 
-        public AppUsersController(IAppUserService appUserService)
+        public AppUsersController(IAppUserService appUserService, IMapper mapper)
         {
             _appUserService = appUserService;
+            _mapper = mapper;
         }
 
         [HttpGet("filtered")]
-        public async Task<ActionResult<PagedResult<AppUser>>> GetFilteredAppUsers([FromQuery] AppUserFilterDto filter)
+        public async Task<ActionResult<PagedResult<AppUserResponseDto>>> GetFilteredAppUsers([FromQuery] AppUserFilterDto filter)
         {
             var result = await _appUserService.GetFilteredAppUsersAsync(filter);
-            return Ok(result);
+            var mappedItems = _mapper.Map<List<AppUserResponseDto>>(result.Items);
+            return Ok(new PagedResult<AppUserResponseDto>(mappedItems, result.TotalCount, result.Page, result.PageSize));
         }
 
         [HttpGet("paged")]
-        public async Task<ActionResult<PagedResult<AppUser>>> GetPagedAppUsers([FromQuery] PaginationRequestDto pagination)
+        public async Task<ActionResult<PagedResult<AppUserResponseDto>>> GetPagedAppUsers([FromQuery] PaginationRequestDto pagination)
         {
             var result = await _appUserService.GetPagedAppUsersAsync(pagination.Page, pagination.PageSize);
-            return Ok(result);
+            var mappedItems = _mapper.Map<List<AppUserResponseDto>>(result.Items);
+            return Ok(new PagedResult<AppUserResponseDto>(mappedItems, result.TotalCount, result.Page, result.PageSize));
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<AppUser>>> GetAllAppUsers()
+        public async Task<ActionResult<List<AppUserResponseDto>>> GetAllAppUsers()
         {
             var appUsers = await _appUserService.GetAllAppUsersAsync();
-            return Ok(appUsers);
+            return Ok(_mapper.Map<List<AppUserResponseDto>>(appUsers));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<AppUser>> GetAppUserById(int id)
+        public async Task<ActionResult<AppUserResponseDto>> GetAppUserById(int id)
         {
             var appUser = await _appUserService.GetAppUserByIdAsync(id);
 
@@ -49,12 +54,11 @@ namespace InventoryApi.Controllers
                 return NotFound();
             }
 
-            return Ok(appUser);
+            return Ok(_mapper.Map<AppUserResponseDto>(appUser));
         }
 
-        // Endpoint para buscar por Email (aprovechando el método nuevo)
         [HttpGet("email/{email}")]
-        public async Task<ActionResult<AppUser>> GetAppUserByEmail(string email)
+        public async Task<ActionResult<AppUserResponseDto>> GetAppUserByEmail(string email)
         {
             var appUser = await _appUserService.GetAppUserByEmailAsync(email);
 
@@ -63,11 +67,11 @@ namespace InventoryApi.Controllers
                 return NotFound();
             }
 
-            return Ok(appUser);
+            return Ok(_mapper.Map<AppUserResponseDto>(appUser));
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<AppUser>> UpdateAppUser(int id, [FromBody] AppUser appUser)
+        public async Task<ActionResult<AppUserResponseDto>> UpdateAppUser(int id, [FromBody] AppUser appUser)
         {
             var updatedAppUser = await _appUserService.UpdateAppUserAsync(id, appUser);
 
@@ -76,11 +80,11 @@ namespace InventoryApi.Controllers
                 return NotFound();
             }
 
-            return Ok(updatedAppUser);
+            return Ok(_mapper.Map<AppUserResponseDto>(updatedAppUser));
         }
 
         [HttpPatch("{id}/role")]
-        public async Task<ActionResult<AppUser>> ChangeUserRole(int id, [FromBody] ChangeRoleRequestDto request)
+        public async Task<ActionResult<AppUserResponseDto>> ChangeUserRole(int id, [FromBody] ChangeRoleRequestDto request)
         {
             var updatedAppUser = await _appUserService.ChangeUserRoleAsync(id, request.Role);
 
@@ -89,7 +93,7 @@ namespace InventoryApi.Controllers
                 return NotFound();
             }
 
-            return Ok(updatedAppUser);
+            return Ok(_mapper.Map<AppUserResponseDto>(updatedAppUser));
         }
 
         [HttpDelete("{id}")]
