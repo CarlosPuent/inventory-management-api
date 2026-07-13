@@ -1,4 +1,5 @@
 ﻿using InventoryApi.Data;
+using InventoryApi.Exceptions;
 using InventoryApi.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -65,7 +66,7 @@ namespace InventoryApi.Repositories
             }
             catch (DbUpdateException)
             {
-                throw new InvalidOperationException("No se puede eliminar la categoría porque tiene productos asociados.");
+                throw new ConflictException("No se puede eliminar la categoría porque tiene productos asociados.");
             }
         }
     }

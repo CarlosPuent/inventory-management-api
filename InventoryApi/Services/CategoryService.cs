@@ -1,5 +1,7 @@
-﻿using InventoryApi.Models;
+﻿using InventoryApi.Exceptions;
+using InventoryApi.Models;
 using InventoryApi.Repositories;
+using Microsoft.EntityFrameworkCore;
 
 namespace InventoryApi.Services
 {
@@ -43,12 +45,12 @@ namespace InventoryApi.Services
         {
             if (string.IsNullOrWhiteSpace(category.Name))
             {
-                throw new ArgumentException("El nombre de la categoría no puede estar vacío.");
+                throw new BusinessRuleException("El nombre de la categoría no puede estar vacío.");
             }
 
             if (string.IsNullOrWhiteSpace(category.Description) || category.Description.Length < 5 || category.Description.Length > 100)
             {
-                throw new ArgumentException("La descripción de la categoría es obligatoria y debe tener entre 5 y 100 caracteres.");
+                throw new BusinessRuleException("La descripción de la categoría es obligatoria y debe tener entre 5 y 100 caracteres.");
             }
         }
     }
