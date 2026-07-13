@@ -18,6 +18,13 @@ namespace InventoryApi.Controllers
             _categoryService = categoryService;
         }
 
+        [HttpGet("filtered")]
+        public async Task<ActionResult<PagedResult<Category>>> GetFilteredCategories([FromQuery] CategoryFilterDto filter)
+        {
+            var result = await _categoryService.GetFilteredCategoriesAsync(filter);
+            return Ok(result);
+        }
+
         [HttpGet("paged")]
         public async Task<ActionResult<PagedResult<Category>>> GetPagedCategories([FromQuery] PaginationRequestDto pagination)
         {

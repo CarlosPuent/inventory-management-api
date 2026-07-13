@@ -6,6 +6,7 @@ namespace InventoryApi.Services
 {
     public interface IAppUserService
     {
+        Task<PagedResult<AppUser>> GetFilteredAppUsersAsync(AppUserFilterDto filter);
         Task<PagedResult<AppUser>> GetPagedAppUsersAsync(int page, int pageSize);
         Task<List<AppUser>> GetAllAppUsersAsync();
         Task<AppUser?> GetAppUserByIdAsync(int id);

@@ -18,6 +18,13 @@ namespace InventoryApi.Controllers
             _supplierService = supplierService;
         }
 
+        [HttpGet("filtered")]
+        public async Task<ActionResult<PagedResult<Supplier>>> GetFilteredSuppliers([FromQuery] SupplierFilterDto filter)
+        {
+            var result = await _supplierService.GetFilteredSuppliersAsync(filter);
+            return Ok(result);
+        }
+
         [HttpGet("paged")]
         public async Task<ActionResult<PagedResult<Supplier>>> GetPagedSuppliers([FromQuery] PaginationRequestDto pagination)
         {

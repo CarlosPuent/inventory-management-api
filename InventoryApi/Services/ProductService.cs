@@ -16,6 +16,35 @@ namespace InventoryApi.Services
             _categoryRepository = categoryRepository;
         }
 
+        public async Task<PagedResult<Product>> GetFilteredProductsAsync(ProductFilterDto filter)
+        {
+            if (filter.Page < 1)
+            {
+                throw new BusinessRuleException("El número de página debe ser mayor o igual a 1.");
+            }
+
+            if (filter.PageSize < 1 || filter.PageSize > 100)
+            {
+                throw new BusinessRuleException("El tamaño de página debe estar entre 1 y 100.");
+            }
+
+            if (filter.MinPrice.HasValue && filter.MaxPrice.HasValue && filter.MinPrice > filter.MaxPrice)
+            {
+                throw new BusinessRuleException("El precio mínimo no puede ser mayor al precio máximo.");
+            }
+
+            if (filter.CategoryId.HasValue)
+            {
+                var categoryExists = await _categoryRepository.GetByIdAsync(filter.CategoryId.Value);
+                if (categoryExists == null)
+                {
+                    throw new BusinessRuleException("La categoría especificada no existe.");
+                }
+            }
+
+            return await _productRepository.GetFilteredAsync(filter);
+        }
+
         public async Task<PagedResult<Product>> GetPagedProductsAsync(int page, int pageSize)
         {
             if (page < 1)

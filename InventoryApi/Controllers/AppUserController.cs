@@ -18,7 +18,13 @@ namespace InventoryApi.Controllers
             _appUserService = appUserService;
         }
 
-        // Endpoint de Paginación
+        [HttpGet("filtered")]
+        public async Task<ActionResult<PagedResult<AppUser>>> GetFilteredAppUsers([FromQuery] AppUserFilterDto filter)
+        {
+            var result = await _appUserService.GetFilteredAppUsersAsync(filter);
+            return Ok(result);
+        }
+
         [HttpGet("paged")]
         public async Task<ActionResult<PagedResult<AppUser>>> GetPagedAppUsers([FromQuery] PaginationRequestDto pagination)
         {

@@ -15,6 +15,21 @@ namespace InventoryApi.Services
             _appUserRepository = appUserRepository;
         }
 
+        public async Task<PagedResult<AppUser>> GetFilteredAppUsersAsync(AppUserFilterDto filter)
+        {
+            if (filter.Page < 1)
+            {
+                throw new BusinessRuleException("El número de página debe ser mayor o igual a 1.");
+            }
+
+            if (filter.PageSize < 1 || filter.PageSize > 100)
+            {
+                throw new BusinessRuleException("El tamaño de página debe estar entre 1 y 100.");
+            }
+
+            return await _appUserRepository.GetFilteredAsync(filter);
+        }
+
         public async Task<PagedResult<AppUser>> GetPagedAppUsersAsync(int page, int pageSize)
         {
             if (page < 1)

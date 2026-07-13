@@ -5,6 +5,7 @@ namespace InventoryApi.Repositories
 {
     public interface ICategoryRepository
     {
+        Task<PagedResult<Category>> GetFilteredAsync(CategoryFilterDto filter);
         Task<PagedResult<Category>> GetPagedAsync(int page, int pageSize);
         Task<List<Category>> GetAllAsync();
         Task<Category?> GetByIdAsync(int id);

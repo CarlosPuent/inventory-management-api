@@ -14,6 +14,31 @@ namespace InventoryApi.Repositories
             _context = context;
         }
 
+        public async Task<PagedResult<Supplier>> GetFilteredAsync(SupplierFilterDto filter)
+        {
+            var query = _context.Suppliers.AsQueryable();
+
+            if (filter.IsActive.HasValue)
+            {
+                query = query.Where(s => s.IsActive == filter.IsActive.Value);
+            }
+
+            query = filter.SortBy?.ToLower() switch
+            {
+                "name" => filter.SortDirection == "desc" ? query.OrderByDescending(s => s.Name) : query.OrderBy(s => s.Name),
+                _ => filter.SortDirection == "desc" ? query.OrderByDescending(s => s.Id) : query.OrderBy(s => s.Id)
+            };
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .Skip((filter.Page - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToListAsync();
+
+            return new PagedResult<Supplier>(items, totalCount, filter.Page, filter.PageSize);
+        }
+
         public async Task<PagedResult<Supplier>> GetPagedAsync(int page, int pageSize)
         {
             var totalCount = await _context.Suppliers.CountAsync();

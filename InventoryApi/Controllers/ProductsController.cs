@@ -18,6 +18,13 @@ public class ProductsController : ControllerBase
         _productService = productService;
     }
 
+    [HttpGet("filtered")]
+    public async Task<ActionResult<PagedResult<Product>>> GetFilteredProducts([FromQuery] ProductFilterDto filter)
+    {
+        var result = await _productService.GetFilteredProductsAsync(filter);
+        return Ok(result);
+    }
+
     [HttpGet("paged")]
     public async Task<ActionResult<PagedResult<Product>>> GetPagedProducts([FromQuery] PaginationRequestDto pagination)
     {

@@ -14,7 +14,37 @@ namespace InventoryApi.Repositories
             _context = context;
         }
 
-        // Recuperamos la implementación de la paginación
+        public async Task<PagedResult<AppUser>> GetFilteredAsync(AppUserFilterDto filter)
+        {
+            var query = _context.AppUsers.AsQueryable();
+
+            if (filter.Role.HasValue)
+            {
+                query = query.Where(u => u.Role == filter.Role.Value);
+            }
+
+            if (filter.IsActive.HasValue)
+            {
+                query = query.Where(u => u.IsActive == filter.IsActive.Value);
+            }
+
+            query = filter.SortBy?.ToLower() switch
+            {
+                "name" => filter.SortDirection == "desc" ? query.OrderByDescending(u => u.Name) : query.OrderBy(u => u.Name),
+                "age" => filter.SortDirection == "desc" ? query.OrderByDescending(u => u.Age) : query.OrderBy(u => u.Age),
+                _ => filter.SortDirection == "desc" ? query.OrderByDescending(u => u.Id) : query.OrderBy(u => u.Id)
+            };
+
+            var totalCount = await query.CountAsync();
+
+            var items = await query
+                .Skip((filter.Page - 1) * filter.PageSize)
+                .Take(filter.PageSize)
+                .ToListAsync();
+
+            return new PagedResult<AppUser>(items, totalCount, filter.Page, filter.PageSize);
+        }
+
         public async Task<PagedResult<AppUser>> GetPagedAsync(int page, int pageSize)
         {
             var totalCount = await _context.AppUsers.CountAsync();

@@ -5,6 +5,7 @@ namespace InventoryApi.Repositories
 {
     public interface ISupplierRepository
     {
+        Task<PagedResult<Supplier>> GetFilteredAsync(SupplierFilterDto filter);
         Task<PagedResult<Supplier>> GetPagedAsync(int page, int pageSize);
         Task<List<Supplier>> GetAllAsync();
         Task<Supplier?> GetByIdAsync(int id);

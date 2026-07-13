@@ -14,6 +14,21 @@ namespace InventoryApi.Services
             _supplierRepository = supplierRepository;
         }
 
+        public async Task<PagedResult<Supplier>> GetFilteredSuppliersAsync(SupplierFilterDto filter)
+        {
+            if (filter.Page < 1)
+            {
+                throw new BusinessRuleException("El número de página debe ser mayor o igual a 1.");
+            }
+
+            if (filter.PageSize < 1 || filter.PageSize > 100)
+            {
+                throw new BusinessRuleException("El tamaño de página debe estar entre 1 y 100.");
+            }
+
+            return await _supplierRepository.GetFilteredAsync(filter);
+        }
+
         public async Task<PagedResult<Supplier>> GetPagedSuppliersAsync(int page, int pageSize)
         {
             if (page < 1)
