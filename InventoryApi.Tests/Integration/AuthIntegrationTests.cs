@@ -38,6 +38,19 @@ public class AuthIntegrationTests : IClassFixture<CustomWebApplicationFactory>
     }
 
     [Fact]
+    public async Task Register_WithDuplicateEmail_Returns409()
+    {
+        var request = new RegisterRequestDto(
+            "Pedro", "Gomez", "pedro.duplicado@test.com", "70003333", 28, 75, "ClaveOriginal123"
+        );
+
+        await _client.PostAsJsonAsync("/api/Auth/register", request);
+        var secondResponse = await _client.PostAsJsonAsync("/api/Auth/register", request);
+
+        Assert.Equal(HttpStatusCode.Conflict, secondResponse.StatusCode);
+    }
+
+    [Fact]
     public async Task ProtectedEndpoint_WithoutToken_Returns401()
     {
         var response = await _client.GetAsync("/api/Products");
