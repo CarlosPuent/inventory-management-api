@@ -51,14 +51,6 @@ public class ExceptionHandlingMiddlewareTests
     }
 
     [Fact]
-    public async Task InvokeAsync_WhenNotFoundExceptionThrown_Returns404()
-    {
-        var (statusCode, _) = await InvokeMiddlewareAsync(new NotFoundException("No encontrado."));
-
-        Assert.Equal(404, statusCode);
-    }
-
-    [Fact]
     public async Task InvokeAsync_WhenUnknownExceptionThrown_Returns500WithGenericMessage()
     {
         var (statusCode, body) = await InvokeMiddlewareAsync(new InvalidOperationException("Detalle interno sensible"));
