@@ -24,11 +24,5 @@ namespace InventoryApi.Models
                 false => "Usuario Inactivo"
             };
         }
-
-        public async Task<string> ValidateEmailAsync()
-        {
-            await Task.Delay(1000);
-            return $"Email validado: {ContactEmail}";
-        }
     }
 }

@@ -13,11 +13,5 @@ public record Supplier(int Id, string Name, string ContactEmail, bool IsActive)
             };
 
         }
-
-        public async Task<string> ValidateEmailAsync()
-        {
-            await Task.Delay(800);
-            return $"Email validado: {ContactEmail}";
-        }
     }
 }

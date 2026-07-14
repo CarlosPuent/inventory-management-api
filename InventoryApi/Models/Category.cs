@@ -10,11 +10,5 @@
                 false => "Categoría Inactiva"
             };
         }
-
-        public async Task<string> GetDescriptionAsync()
-        {
-            await Task.Delay(500); 
-            return $"Categoria: {Name}";
-        }
     }
 }
