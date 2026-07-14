@@ -29,5 +29,9 @@ public class InventoryDbContext : DbContext
         modelBuilder.Entity<AppUser>()
             .Property(u => u.Role)
             .HasConversion<string>();
+
+        modelBuilder.Entity<AppUser>()
+            .HasIndex(u => u.ContactEmail)
+            .IsUnique();
     }
 }

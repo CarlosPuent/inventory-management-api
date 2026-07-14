@@ -1,4 +1,5 @@
 ﻿using InventoryApi.DTOs;
+using InventoryApi.Exceptions;
 using InventoryApi.Models;
 using InventoryApi.Models.Enums;
 using InventoryApi.Repositories;
@@ -26,6 +27,22 @@ public class AuthServiceTests
             _appUserRepositoryMock.Object,
             _passwordHasherMock.Object,
             _tokenServiceMock.Object
+        );
+    }
+
+    [Fact]
+    public async Task RegisterAsync_WhenEmailAlreadyExists_ThrowsConflictException()
+    {
+        var existingUser = new AppUser(1, "Ana", "López", "ana@test.com", "70001111", 25, 60, true, "hashedPassword", UserRole.User);
+
+        _appUserRepositoryMock
+            .Setup(repo => repo.GetByEmailAsync("ana@test.com"))
+            .ReturnsAsync(existingUser);
+
+        var request = new RegisterRequestDto("Ana", "López", "ana@test.com", "70001111", 25, 60, "ClaveNueva123");
+
+        await Assert.ThrowsAsync<ConflictException>(
+            () => _authService.RegisterAsync(request)
         );
     }
 

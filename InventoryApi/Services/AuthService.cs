@@ -1,4 +1,5 @@
 ﻿using InventoryApi.DTOs;
+using InventoryApi.Exceptions;
 using InventoryApi.Models;
 using InventoryApi.Models.Enums;
 using InventoryApi.Repositories;
@@ -24,6 +25,13 @@ public class AuthService : IAuthService
 
     public async Task<AuthResponseDto> RegisterAsync(RegisterRequestDto request)
     {
+        var existingAppUser = await _appUserRepository.GetByEmailAsync(request.ContactEmail);
+
+        if (existingAppUser != null)
+        {
+            throw new ConflictException("Ya existe una cuenta registrada con este correo electrónico.");
+        }
+
         var newAppUser = new AppUser(
             Id: 0,
             Name: request.Name,
